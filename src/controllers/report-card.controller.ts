@@ -1,10 +1,19 @@
 import { Request, Response } from 'express';
-import { BodyDocument, DataDocument, DataSchool, DataStudent, FileBase64, HeaderDocument, ReportCard } from '../interface';
 import PdfPrinter from 'pdfmake';
 import path from 'path';
-import { Black, INSTITUTION, Silver, White } from '../constants';
 import moment from 'moment';
 import fs from 'fs';
+import {
+   BodyDocument,
+   DataDocument,
+   DataSchool,
+   DataStudent,
+   FileBase64,
+   HeaderDocument,
+   ReportCard
+} from '../interface';
+import { Black, INSTITUTION, Silver, White } from '../constants';
+
 
 // Def variables Images
 let img_CECYTEC_: string;
