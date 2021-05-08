@@ -1,3 +1,1 @@
 # pdfmake-api-rest
-
-:typescript:
