@@ -64,3 +64,93 @@ export interface ReportCardStudyProgram {
 export interface FileBase64 {
    file: string;
 }
+
+export interface HeaderDocument {
+   title: string;
+   schoolCycle?: string;
+   date?: string | Date;
+   invoice?: string;
+}
+
+export interface DataDocument {
+   thead?: string[];
+   tbody: any[][];
+   widths?: Array<string|number> | 'auto';
+}
+
+export interface DataSchool {
+   key: string;
+   name: string;
+   address?: string;
+   studyProgram1?: string;
+   studyProgram2?: string;
+   shift?: string;
+   schoolPrincipal?: string;
+   scholarControlManager?: string;
+   person_signing?: string;
+}
+
+export interface StudentAdicionalInformation {
+   
+}
+
+export interface DataStudent {
+   curp?: string;
+   name?: string;
+   firstSurname?: string;
+   secondSurname?: string;
+   birthday?: Date | string;
+   genre?: string;
+   nationality?: string;
+   birthplace?: string;
+   address?: string;
+   suburb?: string;
+   zipcode?: string;
+   telephone?: string;
+   locality?: string;
+   municipality?: string;
+   /** Aditional Information */
+   photo?: string;
+   enrollment?: string;
+   generation?: string;
+   currentPeriod?: string;
+   group?: string;
+   semester?: string;
+   teacher?: string;
+   key_plan?: string;
+   study_plan?: string;
+   key_program?: string;
+   study_program?: string;
+   creditNumberProgram?: number;
+   propaedeuticArea?: string;
+   isMale?: boolean;
+}
+
+export interface DataAcademicRecord {
+   academicRecord: AcademicRecord[];
+   number_credits: number;
+   average: number;
+}
+ 
+export interface AcademicRecord {
+   school_cycle: string;
+   subjects: Subject[];
+   semester?: number;
+}
+ 
+export interface Subject {
+   name: string;
+   score: string | number;
+   order?: number;
+   isExternal?: boolean;
+}
+
+export interface BodyDocument {
+   dataDocument?: DataDocument;
+   dataSchool?: DataSchool;
+   dataStudent?: DataStudent;
+   dataAR?: DataAcademicRecord;
+   need_photo?: boolean;
+   need_stamp?: boolean;
+   CEOSignature?: string;
+}
