@@ -1,4 +1,4 @@
-service: cecytec-reports
+service: cecytecreports
 runtime: nodejs14 # or another supported version
 
 - url: /.*
