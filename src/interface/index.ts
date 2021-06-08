@@ -1,24 +1,41 @@
-export interface ReportCard {
+export interface StudentAditionalInformation {
    /*
 	 * Data student
 	 */
 	enrollment: string;
    name: string;
    curp: string;
+   studyPlanKey: string;
    studyPlanName: string;
    semester: string;
    groupName: string;
    currentPeriod: string;
+   generation: string;
+   propaedeuticArea: string;
    /*
    * Data school
    */
    schoolKey: string;
    schoolName: string;
    schoolPrincipal: string;
+   scholarControlManager: string;
+   address: string;
+}
+
+export interface ReportCard extends StudentAditionalInformation {
   /*
    * Data Report
    */
   reportCardStudyProgram: Array<ReportCardStudyProgram>;
+}
+
+export interface StudentAcademicRecord extends StudentAditionalInformation {
+   /*
+   * Data Academic Record
+   */
+   academicRecords: Array<AcademicRecord>;
+   numberOfCredits: number;
+   average: number;
 }
 
 export interface ReportCardStudyProgram {
@@ -90,10 +107,6 @@ export interface DataSchool {
    person_signing?: string;
 }
 
-export interface StudentAdicionalInformation {
-   
-}
-
 export interface DataStudent {
    curp?: string;
    name?: string;
@@ -125,17 +138,13 @@ export interface DataStudent {
    propaedeuticArea?: string;
    isMale?: boolean;
 }
-
-export interface DataAcademicRecord {
-   academicRecord: AcademicRecord[];
-   number_credits: number;
-   average: number;
-}
  
 export interface AcademicRecord {
-   school_cycle: string;
+   schoolCycle: string;
+   schoolCycleId: string;
    subjects: Subject[];
    semester?: number;
+   isTransfer: boolean;
 }
  
 export interface Subject {
@@ -149,7 +158,7 @@ export interface BodyDocument {
    dataDocument?: DataDocument;
    dataSchool?: DataSchool;
    dataStudent?: DataStudent;
-   dataAR?: DataAcademicRecord;
+   studentAcademicRecord?: StudentAcademicRecord;
    need_photo?: boolean;
    need_stamp?: boolean;
    CEOSignature?: string;
