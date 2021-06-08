@@ -225,6 +225,5 @@ export async function getReportCard(req: Request, res: Response): Promise<Respon
    };
 
    const base64 = await createBase64(pdf);
-   
-   return res.json({ file: base64 } as FileBase64);
+   return res.status(200).send({ file: base64 } as FileBase64);
 }
