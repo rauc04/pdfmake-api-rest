@@ -4,7 +4,7 @@ import { getReportCard } from '../controllers/report-card.controller';
 
 const router = Router();
 
-router.route('/api/report-card').get(getReportCard);
-router.route('/api/academic-record').get(getAcademicRecord);
+router.route('/api/pdfmake/report-card').get(getReportCard);
+router.route('/api/pdfmake/academic-record').get(getAcademicRecord);
 
 export default router;
