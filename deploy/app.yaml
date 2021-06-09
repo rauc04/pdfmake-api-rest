@@ -19,3 +19,6 @@ handlers:
     upload: dist/(.+\.ttf)
     secure: always
     redirect_http_response_code: 301
+
+# Deploy app
+# gcloud app deploy app.yaml --version=v1 --no-promote --project=cecytec

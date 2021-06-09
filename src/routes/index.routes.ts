@@ -4,8 +4,8 @@ import { getReportCard } from '../controllers/report-card.controller';
 
 const router = Router();
 
-router.route('/api/reports/report-card').post(getReportCard);
-router.route('/api/reports/academic-record').post(getAcademicRecord);
+router.route('/reports-formats/report-card').post(getReportCard);
+router.route('/reports-formats/academic-record').post(getAcademicRecord);
 router.route('/').get((req, res) => res.send('Bienvenido a Reportes CECyTEC'));
 
 export default router;
