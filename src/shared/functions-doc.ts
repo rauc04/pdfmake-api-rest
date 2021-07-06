@@ -385,22 +385,22 @@ export const getTableAcademicRecord = (academicRecord: AcademicRecord[]) => {
 }
 
 export const getFinalParagraphAcademicRecord = (data: StudentAcademicRecord, address: string) => {
-   const numberOfCredits = data.numberOfCredits;
-   const average = data.average;
+   const { accumulatedCredits, numberCreditsPlan, average } = data;
    const campus_address = address.toUpperCase();
-   const averageLetter = numberText(average).toUpperCase();
-   const expeditionDate = moment().locale('es').format('DD [de] MMMM [del] YYYY');
+   const avgToString = numberText(average).toUpperCase();
+   const expedition_date = moment().locale('es').format('DD [de] MMMM [del] YYYY');
 
    return {
       text: [
          {
-            text: `SE EXPIDE EL PRESENTE HISTORIAL ACADÉMICO CON ${numberOfCredits} CRÉDITOS CURSADOS DE UN TOTAL DE 360`,
+            // tslint:disable-next-line: max-line-length
+            text: `SE EXPIDE EL PRESENTE HISTORIAL ACADÉMICO CON ${accumulatedCredits} CRÉDITOS CURSADOS DE UN TOTAL DE ${numberCreditsPlan}`,
             alignment: 'justify',
             style: 'paragraph'
          },
          '\n',
          {
-            text: `CON UN PROMEDIO GENERAL DE ${average} (${averageLetter})`,
+            text: `CON UN PROMEDIO GENERAL DE ${average} (${avgToString})`,
             alignment: 'justify',
             style: 'paragraph'
          },
@@ -412,7 +412,7 @@ export const getFinalParagraphAcademicRecord = (data: StudentAcademicRecord, add
          },
          '\n',
          {
-            text: `EL ${expeditionDate.toUpperCase()}, PARA LOS FINES DE CARÁCTER INFORMATIVO QUE AL INTERESADO CONVENGA.`,
+            text: `EL ${expedition_date.toUpperCase()}, PARA LOS FINES DE CARÁCTER INFORMATIVO QUE AL INTERESADO CONVENGA.`,
             alignment: 'justify',
             style: 'paragraph'
          }
@@ -523,7 +523,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       ],
       absolutePosition: (stamp && (CEO || teacher || scholarControlManager)) ? {
          x: -280,
-         y: 580
+         y: 630
       } : null
    };
 
@@ -535,7 +535,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       ],
       absolutePosition: {
          x: 30,
-         y: 580
+         y: 630
       }
    };
 
@@ -552,7 +552,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       ],
       absolutePosition: {
          x: 340,
-         y: 580
+         y: 630
       }
    };
 

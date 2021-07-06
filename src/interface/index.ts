@@ -34,7 +34,8 @@ export interface StudentAcademicRecord extends StudentAditionalInformation {
    * Data Academic Record
    */
    academicRecords: Array<AcademicRecord>;
-   numberOfCredits: number;
+   accumulatedCredits: number;
+   numberCreditsPlan?: number;
    average: number;
 }
 
