@@ -164,3 +164,22 @@ export interface BodyDocument {
    need_stamp?: boolean;
    CEOSignature?: string;
 }
+
+export interface StudentPaymentData {
+   type: string;
+   source: string;
+   periodo: string;
+   nombre: string;
+   especialidad: string;
+   total: string;
+   fechaLimite: string;
+   numeroReferencia: string;
+   concepto: string;
+   matricula: string;
+   plantel: string;
+   productos: string;
+   curp: string;
+   email: string;
+   /** @internal */
+   products: any;
+}

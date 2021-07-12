@@ -1,8 +1,12 @@
 import moment from 'moment';
 import path from 'path';
 import { INSTITUTION, Silver } from '../constants';
-import { AcademicRecord, BodyDocument, DataDocument, DataSchool, HeaderDocument, StudentAcademicRecord } from '../interface';
-import { getFileSVG } from './read-file';
+import { AcademicRecord, BodyDocument, DataDocument, DataSchool, HeaderDocument, StudentAcademicRecord, StudentPaymentData } from '../interface';
+import { getFileSVG, getBase64Image } from './read-file';
+/**
+ * Documentation: https://www.npmjs.com/package/format-currency
+ */
+const formatCurrency = require('format-currency');
 
 // Def variables Images
 let img_CECYTEC_: string = getFileSVG(path.join(__dirname, '..', 'img', '/cecyteclogo_report.svg'));
@@ -10,6 +14,8 @@ let img_SEP_: string = getFileSVG(path.join(__dirname, '..', 'img', '/sep_logoti
 let img_SEDUC_: string;
 let photo_section: string = getFileSVG(path.join(__dirname, '..', 'img', '/photo_section.svg'));
 let stamp_section: string = getFileSVG(path.join(__dirname, '..', 'img', '/stamp_section.svg'));
+let yellowImage: string = "data:image/png;base64," + getBase64Image(path.join(__dirname, '..', 'img', '/vineta.png'));
+let newLogoCECyTEC: string = "data:image/png;base64," + getBase64Image(path.join(__dirname, '..', 'img', '/new_logo_cecytec.png'));
 
 
 export const drawLine = () => {
@@ -28,8 +34,8 @@ export const getHeaderDocument = (header: HeaderDocument, data_campus: DataSchoo
     * Example `CCT 04ETC0009U PLANTEL CAMPECHE`
     */
    const campus = isFormat
-                   ? `CCT ${(data_campus.key).toUpperCase()} PLANTEL ${(data_campus.name).toUpperCase()}`
-                   : null;
+      ? `CCT ${(data_campus.key).toUpperCase()} PLANTEL ${(data_campus.name).toUpperCase()}`
+      : null;
    /**
     * title document
     *
@@ -48,8 +54,8 @@ export const getHeaderDocument = (header: HeaderDocument, data_campus: DataSchoo
     *
     */
    const dateOfFormat = (isFormat && header.date)
-                        ? `\n\n Campeche, Campeche, a ${dateFormat(header.date, ['de', 'del'])}`
-                        : null;
+      ? `\n\n Campeche, Campeche, a ${dateFormat(header.date, ['de', 'del'])}`
+      : null;
 
    let elementsReceipt = null;
    let invoice = null;
@@ -62,7 +68,7 @@ export const getHeaderDocument = (header: HeaderDocument, data_campus: DataSchoo
        *
        */
       const schoolCycle = header.schoolCycle ? `Ciclo escolar: ${header.schoolCycle}` : null;
-      const date = header.date ? `Fecha: ${ header.date }` : null;
+      const date = header.date ? `Fecha: ${header.date}` : null;
 
       elementsReceipt = {
          text: [
@@ -495,8 +501,8 @@ export const getSignatureSection = (body_: BodyDocument) => {
    }
 
    if (body_.dataStudent?.teacher) {
-         teacher = {
-            text: [
+      teacher = {
+         text: [
             {
                text: body_.dataStudent.teacher,
                style: 'signatureManager'
@@ -556,7 +562,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       }
    };
 
-   if (person_signing || schoolPrincipal)  columns.push(column_left);
+   if (person_signing || schoolPrincipal) columns.push(column_left);
    if (stamp) columns.push(column_center);
    if (CEO || teacher || scholarControlManager) columns.push(column_right);
 
@@ -575,7 +581,7 @@ export const getTableDocument = (data_document?: DataDocument) => {
    const fillColorHead_: any[] = [];
 
    if (data_document.thead) {
-      data_document.thead.map( head_element => {
+      data_document.thead.map(head_element => {
          const addFillColor = {
             text: head_element,
             style: 'tableHead'
@@ -610,7 +616,7 @@ export const getStampSection = () => {
       return {
          svg: stamp_section,
          fit: [100, 100],
-         alignment : 'center'
+         alignment: 'center'
       };
    }
    return null;
@@ -621,7 +627,7 @@ const getImageCecytec = (width = 120, height = 120, position = null) => {
    return {
       svg: img_CECYTEC_,
       fit: [width, height],
-      alignment : 'left',
+      alignment: 'left',
       relativePosition: position
    };
 }
@@ -630,7 +636,7 @@ const getImageSeduc = (width = 70, height = 70) => {
    return {
       image: img_SEDUC_,
       fit: [width, height],
-      alignment : 'right'
+      alignment: 'right'
    };
 }
 
@@ -639,7 +645,7 @@ const getImageSEP = (width = 120, height = 120) => {
       return {
          svg: img_SEP_,
          fit: [width, height],
-         alignment : 'right'
+         alignment: 'right'
       };
    }
    return null;
@@ -650,13 +656,13 @@ const getPhotoSection = (photo: string) => {
       return {
          image: photo,
          fit: [70, 70],
-         alignment : 'left'
+         alignment: 'left'
       };
    } else if (photo_section) {
       return {
          svg: photo_section,
          fit: [70, 70],
-         alignment : 'left'
+         alignment: 'left'
       };
    }
    return null;
@@ -733,4 +739,557 @@ export const dateFormat = (date?: Date | string, textConnectors = ['de', 'de']) 
       return moment(date).locale('es').format(`DD [${textConnectors[0]}] MMMM [${textConnectors[1]}] YYYY`);
    }
    return moment().locale('es').format('DD/MMMM/YYYY');
+}
+
+
+/**  PDF Payments  */
+export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
+   const id = 2;
+
+   let mat = '';
+   if (id === 2) {
+      mat = 'Matricula: ';
+   } else {
+      mat = 'Folio del aspirante: ';
+   }
+
+   let left = 40;
+   const docDefinition = {
+      content: [
+         {
+            image: newLogoCECyTEC,
+            width: 70,
+            margin: [0, 0, 0, 0]
+         },
+         {
+            text: 'DEPOSITO BANCARIO',
+            style: 'importe',
+         },
+         {
+            text: 'Total a Pagar /MXN', style: 'totala'
+         },
+         {
+            text: toCurrency(Number(paymentData.total)), style: 'total'
+         },
+         {
+            text: 'Fecha Limite de Pago', style: 'fechatitulo'
+         },
+         {
+            text: paymentData.fechaLimite, style: 'fecha'
+         },
+         {
+            text: 'Beneficiario:', style: 'beneficiario'
+         },
+         {
+            text: paymentData.nombre, style: 'name'
+         },
+         {
+            text: mat + paymentData.matricula, style: 'matricula'
+         },
+         {
+            text: 'Plantel: ' + paymentData.plantel, style: 'campus'
+         },
+         {
+            text: 'Especialidad: ' + paymentData.especialidad, style: 'matricula'
+         },
+         {
+            text: 'Período: ' + paymentData.periodo, style: 'matricula'
+         },
+         {
+            text: 'Detalle de la compra', style: 'compra'
+         },
+
+         {
+            style: 'tableExample',
+            table: {
+               widths: [20, '*', 160],
+               body: [
+                  //header
+                  [
+                     { text: '#', italics: false, bold: true, alignment: 'center' },
+                     { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
+                     { text: 'Importe', bold: true, alignment: 'center' }
+                  ],
+               ]
+            }
+         },
+         {
+            style: 'dataTable',
+            table: {
+               widths: [20, '*', 160],
+               // data del body
+               body: bodyProductPayment(paymentData.products)
+            }
+         },
+         {
+            text: 'Pasos para realizar el pago', style: 'pasos'
+         },
+         {
+            text: 'Desde BBVA Bancomer:', style: 'desde'
+         }, {
+            text: '1. Imprimir la referencia y mostrarla en ventanilla para la realizar el pago, con los siguientes datos.', style: 'primero'
+         }, {
+            text: 'Número de convenio CIE: 1837192 \n\n Clabe: 012914002018371926 \n\n'
+               + 'Referencia: ' + paymentData.numeroReferencia + ' \n\n Importe: '
+               + paymentData.total + ' MXN \n\n Concepto: '
+               + paymentData.concepto, style: 'primero3'
+         }, {
+            text: 'Nota: ',
+            alignment: 'left', bold: true, fontSize: 8, color: 'black', margin: [40, 25, 0, 0]
+         }, {
+            text: 'Su recibo de pago se enviara a su email',
+            alignment: 'left', bold: false, fontSize: 8, color: 'black', margin: [60, -9, 0, 0]
+         }
+         /*{
+           text: 'Opción 2: Depósito bancario',
+           alignment: 'left', bold: true, fontSize: 12, color: 'black', margin: [40, 25, 0, 0]
+         }, {
+           image: getReferenciaPDF(),
+           width: 480,
+           // margin: [left, top, right, bottom]
+           margin: [25, 0, 0, 0]
+         }, {
+           text: spei.nombre, alignment: 'left', bold: true,  fontSize: 7.5, color: '#046DAC', margin: [41, -165, 0, 0] 
+         }, {
+           text: spei.plantel, alignment: 'left', bold: true,  fontSize: 8, color: '#046DAC',  margin: [41, 1, 0, 0] 
+         }, { 
+           text: spei.folio, alignment: 'left', bold: true, fontSize: 8, color: '#046DAC', margin: [41, 1, 0, 0] 
+         }, { 
+           text: spei.precio, alignment: 'left', bold: true, fontSize: 8, color: '#046DAC', margin: [41, 1, 0, 0] 
+         }, { // matricula de REFERENCIA
+           text: spei.referencia,  alignment: 'right', bold: false, fontSize: 9, color: '#656566', margin: [0, 104.5, 104, 0]
+         }  */
+
+
+      ],
+      styles: {
+         tableExample: {
+            margin: [left, 0, 40, 0],
+            alignment: 'center'
+         },
+         dataTable: {
+            margin: [left, 0, 40, 0],
+         },
+         importe: {
+            fontSize: 14,
+            bold: true,
+            alignment: 'center',
+            // margin: [left, top, right, bottom]
+            margin: [50, -30, 5, 10]
+         },
+         totala: {
+            alignment: 'right',
+            bold: true,
+            fontSize: 14,
+            color: 'black',
+            margin: [left, 20, 40, 0]
+         },
+         total: {
+            alignment: 'right',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, 5, 40, 0]
+         },
+         fecha: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 9,
+            color: 'black',
+            margin: [165, -12, 0, 0]
+         },
+         fechatitulo: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, -10, 0, 0]
+         },
+         beneficiario: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, 20, 0, 0]
+         },
+         name: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [left, 10, 0, 0]
+         },
+         campus: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [left, 5, 0, 0]
+         },
+         matricula: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [left, 5, 0, 0]
+         },
+         compra: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, 15, 0, 0]
+         },
+         pasos: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [40, 25, 0, 0]
+         },
+         desde: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 10,
+            color: 'black',
+            margin: [40, 10, 0, 0]
+         },
+         primero: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [40, 5, 0, 0]
+         },
+         primero2: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [48.5, 2, 0, 0]
+         },
+         primero3: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [60, 15, 0, 10]
+         },
+         segundo: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [40, -74, 0, 0]
+         },
+         segundo2: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [48.5, -2, 0, 0]
+         },
+         segundo3: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [66, 15, 0, 0]
+         },
+         desdecua: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 10,
+            color: 'black',
+            margin: [300, -13, 0, 0]
+         },
+         primerodos: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [300, -65, 0, 0]
+         },
+         primerodos2: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [307, 2, 0, 0]
+         },
+         primerodos3: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 8,
+            color: 'black',
+            margin: [320, 15, 0, 0]
+         }
+      },
+      defaultStyle: {
+         font: 'Verdana'
+      }
+   }
+
+   return docDefinition;
+}
+
+export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
+   let mat = '';
+   let paso = '';
+   let f_paso = '';
+   let paso_tres = '';
+   let paso_cinco = '';
+
+   let id = 2;
+
+   if (id === 1) {
+      mat = 'Folio del aspirante: ';
+      paso = 'Aspirante';
+   } else {
+      mat = 'Matricula: ';
+      paso = 'Alumno';
+   }
+
+   if (id === 3) {
+      f_paso = '1. Seleccionar la opción COBRO ';
+      paso_tres = '3. Seleccionar la referencia con el botón de  "+"  para agregarán los recibos pendientes';
+      paso_cinco = '5. Imprimir el recibo generado'
+   } else {
+      f_paso = '1. Seleccionar la opción CAJA ';
+      paso_tres = '3. Seleccionar el registro para agregar las partidas automaticamente (productos)';
+      paso_cinco = '5. Imprimir el recibo'
+   }
+
+   let left = 40;
+   const docDefinition = {
+      content: [
+         {
+            image: newLogoCECyTEC,
+            width: 70,
+            margin: [0, 0, 0, 0]
+         },
+         {
+            text: 'PAGO EN CAJA CECyTEC',
+            style: 'importe',
+         },
+         {
+            text: '\n Total a Pagar /MXN', style: 'totala'
+         },
+         {
+            text: toCurrency(Number(paymentData.total)), style: 'total'
+         },
+         {
+            image: yellowImage, width: 38, height: 34, margin: [0, 8, 0, 0]
+         },
+         {
+            text: 'Fecha Limite de Pago \n \n', style: 'fechatitulo'
+         },
+         {
+            text: paymentData.fechaLimite, style: 'fecha'
+         },
+         {
+            text: 'Beneficiario:', style: 'beneficiario'
+         },
+         {
+            text: paymentData.nombre, style: 'name'
+         },
+         {
+            text: mat + paymentData.matricula, style: 'matricula'
+         },
+         {
+            text: 'Plantel: ' + paymentData.plantel, style: 'campus'
+         },
+         {
+            text: 'Especialidad: ' + paymentData.especialidad, style: 'matricula'
+         },
+         {
+            text: 'Período: ' + paymentData.periodo, style: 'matricula'
+         },
+         {
+            image: yellowImage, width: 38, height: 34, margin: [0, 8, 0, 0]
+         },
+         {
+            text: 'Detalle de la compra \n\n', style: 'compra'
+         },
+         {
+            style: 'tableExample',
+            table: {
+               widths: [20, '*', 160],
+               body: [
+                  //header
+                  [
+                     { text: '#', italics: false, bold: true, alignment: 'center' },
+                     { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
+                     { text: 'Importe', bold: true, alignment: 'center' }
+                  ]
+               ]
+            }
+         },
+         {
+            style: 'dataTable',
+            table: {
+               widths: [20, '*', 160],
+               // data del body
+               body: bodyProductPayment(paymentData.products)
+            }
+         }, {
+            image: yellowImage, width: 38, height: 34, margin: [0, 8, 0, 0]
+         }, {
+            text: 'Como realizar el pago', style: 'pasos'
+         }, {
+            text: '' + paso + ': ', style: 'desde'
+         }, {
+            text: '1. Entregar la ficha impresa al cajero de CECyTEC  \n\n '
+               + '2. Entregar la cuota a pagar (importe completo o parcial) \n\n'
+               + '3. Esperar a que el cajero realize el cobro \n\n '
+               + '4. Recibir el recibo de pago', style: 'primero'
+         }, {
+            text: '\n Instrucciones para la caja CECyTEC ', style: 'desde'
+         }, {
+            text: f_paso + ' \n\n '
+               + '2. Buscar el número de referencia ' + paymentData.numeroReferencia + ' \n\n'
+               + paso_tres + '\n\n '
+               + '4. Recibir el dinero del ' + paso + ' (importe completo o parcial ) \n\n'
+               + paso_cinco, style: 'primero'
+         }
+
+      ],
+      styles: {
+         primero: {
+            alignment: 'left',
+            bold: false,
+            fontSize: 10,
+            color: '#6F6F6E',
+            margin: [50, 5, 0, 0]
+         },
+         pasos: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 14,
+            color: 'black',
+            margin: [40, -24, 0, 0]
+         },
+         desde: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 11,
+            color: 'black',
+            margin: [40, 10, 0, 0]
+         },
+         tableExample: {
+            margin: [left, 0, 40, 0],
+            alignment: 'center'
+         },
+         dataTable: {
+            margin: [left, 0, 40, 0],
+         },
+         importe: {
+            fontSize: 16,
+            bold: true,
+            alignment: 'center',
+            // margin: [left, top, right, bottom]
+            margin: [50, -30, 5, 10]
+         },
+         totala: {
+            alignment: 'right',
+            bold: true,
+            fontSize: 14,
+            color: 'black',
+            margin: [left, 20, 40, 0]
+         },
+         total: {
+            alignment: 'right',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, 5, 40, 0]
+         },
+         fecha: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 10,
+            color: 'black',
+            margin: [165, -12, 0, 0]
+         },
+         fechatitulo: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, -50, 0, 0]
+         },
+         beneficiario: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, 20, 0, 0]
+         },
+         name: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 10,
+            color: 'black',
+            margin: [left, 10, 0, 0]
+         },
+         campus: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 10,
+            color: 'black',
+            margin: [left, 5, 0, 0]
+         },
+         matricula: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 10,
+            color: 'black',
+            margin: [left, 5, 0, 0]
+         },
+         compra: {
+            alignment: 'left',
+            bold: true,
+            fontSize: 12,
+            color: 'black',
+            margin: [left, -25, 0, 0]
+         }
+      },
+      defaultStyle: {
+         font: 'Verdana'
+      }
+   }
+
+   return docDefinition;
+}
+
+const bodyProductPayment = (items: Array<any>) => {
+   const data = [];
+   for (let index = 0; index < items.length; index++) {
+      const element = items[index];
+      const ids = index + 1;
+      data.push([
+         { text: ids, italics: false, bold: false, alignment: 'center' },
+         { text: element.name, italics: false, bold: false, alignment: 'left' },
+         { text: toCurrency(Number(element.price)), italics: false, bold: false, alignment: 'right' }
+      ]);
+   }
+
+   return data
+}
+
+export const toCurrency = (amount: number, locale?: string, prefix?: string): string => {
+   let result = null;
+   locale = locale || 'es-MX';
+   prefix = prefix || '$ ';
+   let opts = { format: '%s%v', symbol: prefix, locale: locale };
+   
+   try {
+      const text = amount.toString().replace(prefix, '').replace(/ /g, '').replace(/,/g, '');
+      result = formatCurrency(+text, opts);
+   } catch (error) {
+      result = formatCurrency(0, opts);
+      console.log(error);
+   }
+
+   return result;
 }
