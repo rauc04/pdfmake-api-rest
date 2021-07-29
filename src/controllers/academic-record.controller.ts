@@ -7,7 +7,7 @@ import {
    HeaderDocument,
    StudentAcademicRecord
 } from '../interface';
-import { Black } from '../constants';
+import { Black, watermarkText } from '../constants';
 import {
    getAdicionalInformation,
    getFinalParagraphAcademicRecord,
@@ -56,6 +56,7 @@ export async function getAcademicRecord(req: Request, res: Response): Promise<Re
       pageOrientation: 'portrait',
       /* [left, top, right, bottom] */
       // pageMargins: [ 13.03937007874, 9.0708661417323, 22.110236220472, 13.889763779528],
+      watermark: !studentAcademicRecord.isValid ? watermarkText : null,
       content: [
          /** @CreateHeaderAcademicRecord Start */
          getHeaderDocument(header, dataSchool, true).map(data => data),

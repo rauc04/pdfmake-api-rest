@@ -20,6 +20,7 @@ export interface StudentAditionalInformation {
    schoolPrincipal: string;
    scholarControlManager: string;
    address: string;
+   isValid: boolean;
 }
 
 export interface ReportCard extends StudentAditionalInformation {

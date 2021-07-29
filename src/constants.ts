@@ -22,3 +22,10 @@ export const Yellow = '#FFF200';
 export const Pink = '#FF61B7';
 
 export const INSTITUTION = 'COORDINACIÓN DE ORGANISMOS DESCENTRALIZADOS ESTATALES DE CECYTEs \n COLEGIO DE ESTUDIOS CIENTÍFICOS Y TECNOLÓGICOS DEL ESTADO CAMPECHE';
+
+export const watermarkText = {
+   text: 'Documento no válido',
+   color: Salmon,
+   opacity: 0.1,
+   bold: true
+}

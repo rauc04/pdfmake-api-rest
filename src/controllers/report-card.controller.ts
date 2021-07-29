@@ -8,7 +8,7 @@ import {
    HeaderDocument,
    ReportCard
 } from '../interface';
-import { Black, White } from '../constants';
+import { Black, watermarkText, White } from '../constants';
 import {
    getAdicionalInformation,
    getHeaderDocument,
@@ -159,6 +159,7 @@ export async function getReportCard(req: Request, res: Response): Promise<Respon
       pageOrientation: 'portrait',
       /* [left, top, right, bottom] */
       // pageMargins: [ 13.03937007874, 9.0708661417323, 22.110236220472, 13.889763779528],
+      watermark: !newReportCard.isValid ? watermarkText : null,
       content: [
          /** @CreateHeaderReportCard Start */
          getHeaderDocument(header, dataSchool, true).map(data => data),
