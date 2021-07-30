@@ -121,7 +121,7 @@ export const getHeaderDocument = (header: HeaderDocument, data_campus: DataSchoo
                      },
                      elementsReceipt
                   ],
-                  invoice ? getImageSeduc() : getImageSEP(100, 100)
+                  invoice ? getImageSeduc() : getImageSEP()
                ]
             ]
          },
@@ -529,7 +529,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       ],
       absolutePosition: (stamp && (CEO || teacher || scholarControlManager)) ? {
          x: -280,
-         y: 630
+         y: 645
       } : null
    };
 
@@ -541,7 +541,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       ],
       absolutePosition: {
          x: 30,
-         y: 630
+         y: 645
       }
    };
 
@@ -558,7 +558,7 @@ export const getSignatureSection = (body_: BodyDocument) => {
       ],
       absolutePosition: {
          x: 340,
-         y: 630
+         y: 645
       }
    };
 
