@@ -29,3 +29,14 @@ export const watermarkText = {
    opacity: 0.1,
    bold: true
 }
+
+export const footerText = {
+   text: 'Nota: Este documento solo es de carácter informativo para el interesado y carece de validez oficial',
+   fontSize: 8,
+   color: Black,
+   bold: true,
+   relativePosition: {
+      x: 20,
+      y: 20
+   }
+}
