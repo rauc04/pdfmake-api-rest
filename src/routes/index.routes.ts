@@ -5,9 +5,9 @@ import { getReportCard } from '../controllers/report-card.controller';
 
 const router = Router();
 
-router.route('/reports-formats/report-card').post(getReportCard);
-router.route('/reports-formats/academic-record').post(getAcademicRecord);
-router.route('/reports-formats/payment-document').post(getPaymentDocument);
-router.route('/').get((req, res) => res.send('Bienvenido a Reportes CECyTEC'));
+router.route('/rpt/report-card').post(getReportCard);
+router.route('/rpt/academic-record').post(getAcademicRecord);
+router.route('/rpt/payment-document').post(getPaymentDocument);
+router.route('/rpt/welcome').get((req, res) => res.send('Bienvenido a Reportes CECyTEC'));
 
 export default router;
