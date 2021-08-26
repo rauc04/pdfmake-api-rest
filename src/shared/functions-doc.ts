@@ -352,15 +352,16 @@ export const getTableAcademicRecord = (academicRecord: AcademicRecord[]) => {
 
          body.push(theadTableComplement);
 
-         academic.subjects.map((sub: any) => {
+         academic.subjects.map(sub => {
             body.push([
                {
                   text: sub.name,
-                  alignment: sub.isExternal ? 'center' : 'left'
+                  alignment: sub.external ? 'center' : 'left'
                },
                {
                   text: sub.score,
-                  alignment: 'center'
+                  alignment: 'center',
+                  noWrap: true
                }
             ]);
          });
@@ -719,7 +720,7 @@ export const generateArrayString = (length: number, text: string = ''): string[]
 }
 
 const arrayGroup = <T>(array: T[]) => {
-   const TEMPORARY = [];
+   const TEMPORARY: T[][] = [];
    const GROUP_NUMBER = 2;
 
    for (let index_array = 0; index_array < array.length; index_array += GROUP_NUMBER) {

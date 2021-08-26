@@ -145,7 +145,6 @@ export interface AcademicRecord {
    schoolCycle: string;
    schoolCycleId: string;
    subjects: Subject[];
-   semester?: number;
    isTransfer: boolean;
 }
  
@@ -153,7 +152,7 @@ export interface Subject {
    name: string;
    score: string | number;
    order?: number;
-   isExternal?: boolean;
+   external?: boolean;
 }
 
 export interface BodyDocument {
