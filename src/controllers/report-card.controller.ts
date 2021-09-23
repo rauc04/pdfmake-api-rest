@@ -330,8 +330,6 @@ export async function getManyReportCard(req: Request, res: Response): Promise<Re
          widths
       };
 
-      dataDocument.tbody = thead.concat(dataDocument.tbody);
-
       const dataSchool: DataSchool = {
          key: newReportCard.schoolKey,
          name: newReportCard.schoolName,
@@ -356,7 +354,7 @@ export async function getManyReportCard(req: Request, res: Response): Promise<Re
 
       const pageBreak = (index === reportCards.length - 1) ? {} : { text: '', pageBreak: 'before' };
 
-      body!!.dataDocument!!.tbody = body!!.dataDocument!!.tbody.map(item => {
+      dataDocument.tbody = dataDocument.tbody.map(item => {
          return item.map((value, secondIndex) => {
             if (secondIndex === 1) {
                return {
@@ -374,7 +372,6 @@ export async function getManyReportCard(req: Request, res: Response): Promise<Re
       });
 
       dataDocument.tbody = thead.concat(dataDocument.tbody);
-      dataDocument.widths = widths;
 
       contentCollection.push(
          /** @CreateHeaderReportCard Start */
