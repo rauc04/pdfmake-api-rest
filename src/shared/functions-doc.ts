@@ -834,12 +834,19 @@ export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
                + 'Referencia: ' + paymentData.numeroReferencia + ' \n\n Importe: '
                + paymentData.total + ' MXN \n\n Concepto: '
                + paymentData.concepto, style: 'primero3'
-         }, {
-            text: 'Nota: ',
-            alignment: 'left', bold: true, fontSize: 8, color: 'black', margin: [40, 25, 0, 0]
-         }, {
-            text: 'Su recibo de pago se enviara a su email',
-            alignment: 'left', bold: false, fontSize: 8, color: 'black', margin: [60, -9, 0, 0]
+         },
+         {
+            text: [
+               {
+                  text: 'Nota: ',
+                  bold: true, fontSize: 8, color: 'black'
+               },
+               {
+                  text: 'Su recibo de pago se enviara a su email',
+                  bold: false, fontSize: 8, color: 'black'
+               }
+            ],
+            margin: [40, 25, 0, 0]
          }
          /*{
            text: 'Opción 2: Depósito bancario',
@@ -897,7 +904,7 @@ export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
             bold: true,
             fontSize: 9,
             color: 'black',
-            margin: [165, -12, 0, 0]
+            margin: [left, 0, 0, 0]
          },
          fechatitulo: {
             alignment: 'left',
@@ -1210,7 +1217,7 @@ export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
             bold: true,
             fontSize: 10,
             color: 'black',
-            margin: [165, -12, 0, 0]
+            margin: [left, 0, 0, 0]
          },
          fechatitulo: {
             alignment: 'left',

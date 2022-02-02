@@ -11,18 +11,8 @@ export async function getPaymentDocument(req: Request, res: Response): Promise<R
    studentPaymentData.products = JSON.parse(studentPaymentData.productos)
 
    if(Number(studentPaymentData.type) == 1 ) {
-      /*if(Number(studentPaymentData.source) <= 2) {
-         // generar datos para spei: extraordinario e intersemestrales
-      } else if (Number(studentPaymentData.source) === 3){
-         // datos para pagos pendientes de spei
-      }*/
       pdf = pdfCONVENIO(studentPaymentData)
    } else if(Number(studentPaymentData.type) == 2) {
-      /*if(Number(studentPaymentData.source) <= 2) {
-        //extraordinario se intersemestrales
-      }  else if (Number(studentPaymentData.source) === 3){
-         // datos para pagos pendientes de spei
-      }*/
       pdf = pdfREFERENCE(studentPaymentData)
    }
 
