@@ -3,6 +3,7 @@ import path from 'path';
 import { INSTITUTION, Silver } from '../constants';
 import { AcademicRecord, BodyDocument, DataDocument, DataSchool, HeaderDocument, StudentAcademicRecord, StudentPaymentData } from '../interface';
 import { getFileSVG, getBase64Image } from './read-file';
+
 /**
  * Documentation: https://www.npmjs.com/package/format-currency
  */
@@ -742,9 +743,27 @@ export const dateFormat = (date?: Date | string, textConnectors = ['de', 'de']) 
    return moment().locale('es').format('DD/MMMM/YYYY');
 }
 
-
 /**  PDF Payments  */
 export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
+   const menu_table = [];
+   let wid_menu: any[];
+   if(Number(paymentData.source) === 3) {
+     menu_table.push([
+       { text: '#', italics: false, bold: true, alignment: 'center' }, 
+       { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
+       { text: 'Concepto', italics: false, bold: true, alignment: 'center' },
+       { text: 'Importe', bold: true, alignment: 'center' }
+     ])
+     wid_menu = [20, 130, '*', 60]
+   } else {
+     wid_menu = [20, '*', 120]
+     menu_table.push([
+       { text: '#', italics: false, bold: true, alignment: 'center' }, 
+       { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
+       { text: 'Importe', bold: true, alignment: 'center' }
+     ])
+   }
+   
    const id = 2;
 
    let mat = '';
@@ -799,27 +818,19 @@ export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
          {
             text: 'Detalle de la compra', style: 'compra'
          },
-
          {
             style: 'tableExample',
             table: {
-               widths: [20, '*', 160],
-               body: [
-                  //header
-                  [
-                     { text: '#', italics: false, bold: true, alignment: 'center' },
-                     { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
-                     { text: 'Importe', bold: true, alignment: 'center' }
-                  ],
-               ]
+               widths: wid_menu,
+               body: menu_table
             }
          },
          {
             style: 'dataTable',
             table: {
-               widths: [20, '*', 160],
+               widths: wid_menu,
                // data del body
-               body: bodyProductPayment(paymentData.products)
+               body: bodyProductPayment(paymentData.products, Number(paymentData.source))
             }
          },
          {
@@ -1042,6 +1053,24 @@ export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
 }
 
 export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
+   const menu_table = [];
+   let wid_menu: any[];
+   if(Number(paymentData.source) === 3) {
+     menu_table.push([
+       { text: '#', italics: false, bold: true, alignment: 'center' }, 
+       { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
+       { text: 'Concepto', italics: false, bold: true, alignment: 'center' },
+       { text: 'Importe', bold: true, alignment: 'center' }
+     ])
+     wid_menu = [20, 130, '*', 60]
+   } else {
+     wid_menu = [20, '*', 120]
+     menu_table.push([
+       { text: '#', italics: false, bold: true, alignment: 'center' }, 
+       { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
+       { text: 'Importe', bold: true, alignment: 'center' }
+     ])
+   }
    let mat = '';
    let paso = '';
    let f_paso = '';
@@ -1122,23 +1151,16 @@ export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
          {
             style: 'tableExample',
             table: {
-               widths: [20, '*', 160],
-               body: [
-                  //header
-                  [
-                     { text: '#', italics: false, bold: true, alignment: 'center' },
-                     { text: paymentData.concepto, italics: false, bold: true, alignment: 'center' },
-                     { text: 'Importe', bold: true, alignment: 'center' }
-                  ]
-               ]
+               widths: wid_menu,
+               body: menu_table
             }
          },
          {
             style: 'dataTable',
             table: {
-               widths: [20, '*', 160],
+               widths: wid_menu,
                // data del body
-               body: bodyProductPayment(paymentData.products)
+               body: bodyProductPayment(paymentData.products, Number(paymentData.source))
             }
          }, {
             image: yellowImage, width: 38, height: 34, margin: [0, 8, 0, 0]
@@ -1270,16 +1292,27 @@ export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
    return docDefinition;
 }
 
-const bodyProductPayment = (items: Array<any>) => {
+const bodyProductPayment = (items: Array<any>, identi: number) => {
+ 
    const data = [];
+   console.log(items.length);
    for (let index = 0; index < items.length; index++) {
       const element = items[index];
       const ids = index + 1;
-      data.push([
-         { text: ids, italics: false, bold: false, alignment: 'center' },
-         { text: element.name, italics: false, bold: false, alignment: 'left' },
-         { text: toCurrency(Number(element.price)), italics: false, bold: false, alignment: 'right' }
-      ]);
+      if(identi === 3) { 
+         data.push([
+            { text: ids, italics: false, bold: false, alignment: 'center' },
+            { text: element.name, italics: false, bold: false, alignment: 'left' },
+            { text: element.concepto, italics: false, bold: false, alignment: 'left' },
+            { text: toCurrency(Number(element.price)), italics: false, bold: false, alignment: 'right' }
+         ]);
+      } else {
+         data.push([
+            { text: ids, italics: false, bold: false, alignment: 'center' },
+            { text: element.name, italics: false, bold: false, alignment: 'left' },
+            { text: toCurrency(Number(element.price)), italics: false, bold: false, alignment: 'right' }
+         ]);
+      }     
    }
 
    return data
