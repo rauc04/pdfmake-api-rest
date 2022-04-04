@@ -2,6 +2,7 @@ import moment from 'moment';
 import path from 'path';
 import { INSTITUTION, Silver } from '../constants';
 import { AcademicRecord, BodyDocument, DataDocument, DataSchool, HeaderDocument, StudentAcademicRecord, StudentPaymentData } from '../interface';
+import { partition } from './array-functions';
 import { getFileSVG, getBase64Image } from './read-file';
 
 /**
@@ -339,7 +340,7 @@ export const getTableAcademicRecord = (academicRecord: AcademicRecord[]) => {
    const primaryBody: any[] = [];
    const tableComplement = {};
 
-   arrayGroup(academicRecord).map(row => {
+   partition(academicRecord).map(row => {
       const rows = row.map(academic => {
          const body = [];
 
@@ -720,17 +721,7 @@ export const generateArrayString = (length: number, text: string = ''): string[]
    return newArray;
 }
 
-const arrayGroup = <T>(array: T[]) => {
-   const TEMPORARY: T[][] = [];
-   const GROUP_NUMBER = 2;
 
-   for (let index_array = 0; index_array < array.length; index_array += GROUP_NUMBER) {
-      const part = array.slice(index_array, index_array + GROUP_NUMBER);
-      TEMPORARY.push(part);
-   }
-
-   return TEMPORARY;
-}
 
 /**
  * @textConnectors
