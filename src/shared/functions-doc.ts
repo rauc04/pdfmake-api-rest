@@ -1037,13 +1037,21 @@ export const pdfCONVENIO = (paymentData: StudentPaymentData) => {
       },
       defaultStyle: {
          font: 'Verdana'
-      }
+      },
+      footer: {
+         columns: [
+           { text: 'Origen: WEB', alignment: 'right'}
+         ]
+       },
    }
 
    return docDefinition;
 }
 
 export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
+   console.log("DATOS DEL PAYMENT");
+   console.log(paymentData);
+
    const menu_table = [];
    let wid_menu: any[];
    if(Number(paymentData.source) === 3) {
@@ -1277,7 +1285,12 @@ export const pdfREFERENCE = (paymentData: StudentPaymentData) => {
       },
       defaultStyle: {
          font: 'Verdana'
-      }
+      },
+      footer: {
+         columns: [
+           { text: 'Ficha generada desde la App Consulta Escolar', alignment: 'right', fontSize: 7, margin: [-10, 30, 70, 0]}
+         ]
+       },
    }
 
    return docDefinition;
