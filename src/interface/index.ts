@@ -180,6 +180,11 @@ export interface StudentPaymentData {
    productos: string;
    curp: string;
    email: string;
+   studentId: string;
+   campusId: string;
+   cycleId: string;
    /** @internal */
    products: any;
+
+
 }
