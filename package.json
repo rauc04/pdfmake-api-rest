@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "build": "tsc && cp -R package.json ./deploy/dist && cp -R ./deploy/app.yaml ./deploy/dist && cp -R ./deploy/.gcloudignore ./deploy/dist",
+    "build": "tsc && cp -R src/img ./deploy/dist && cp package.json ./deploy/dist && cp ./deploy/app.yaml ./deploy/dist && cp ./deploy/.gcloudignore ./deploy/dist",
     "dev": "nodemon src/index.ts --exec ts-node"
   },
   "keywords": [],
